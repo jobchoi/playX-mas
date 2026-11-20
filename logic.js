@@ -1,18 +1,21 @@
 (function (root, factory) {
   if (typeof module === 'object' && module.exports) module.exports = factory();
   else root.Game = factory();
-})(typeof globalThis !== 'undefined' ? globalThis : this, function () {
+})(globalThis, function () {
   function normalize(data) {
-    return {team: typeof data?.team === 'string' ? data.team : '', completed: data?.completed && typeof data.completed === 'object' ? data.completed : {}};
+    return {completed: data && data.completed && typeof data.completed === 'object' ? data.completed : {}};
   }
-  function complete(data, id, level) {
+  function complete(data, station, level) {
     const state = normalize(data);
-    return {...state, completed: {...state.completed, [id]: {...state.completed[id], [level]: true}}};
+    return {completed: {...state.completed, [station.id]: {...state.completed[station.id], [level]: true}}};
   }
-  function count(data, missions) {
+  function collected(data, stations) {
     const state = normalize(data);
-    return missions.filter(m => state.completed[m.id]?.child === true).length;
+    return stations.filter(s => s.fragment && state.completed[s.id]?.child === true).map(s => s.fragment).sort((a, b) => a.order - b.order);
   }
-  function correct(mission, choice) { return mission.type !== 'action' && Number.isInteger(choice) && choice === mission.answer; }
-  return {normalize, complete, count, correct};
+  function finale(data, stations) {
+    const required = stations.filter(s => !s.bonus && s.fragment);
+    return required.length > 0 && required.every(s => normalize(data).completed[s.id]?.child === true);
+  }
+  return {normalize, complete, collected, finale};
 });

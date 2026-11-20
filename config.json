@@ -1,5 +1,8 @@
 {
-  "title": "성탄 이야기 QR 챌린지",
-  "leaderCode": "1224",
-  "storageKey": "playxmas-progress-v1"
+  "title": "Rt탐험대",
+  "storageKey": "playxmas-adventure-v2",
+  "story": "별빛 편지가 도착했어요! 흩어진 약속을 찾아 교회 곳곳을 탐험하고 말씀을 완성해 주세요.",
+  "safety": "리더와 함께 허용된 곳에서 천천히 이동해요. 물건을 옮기거나 위험한 곳에 들어가지 않아요.",
+  "finale": "모든 말씀 조각을 모았어요! 함께 소리 내어 읽어 보세요.",
+  "verseReference": "성탄 메시지 초안 · 담당 교사 검토 필요"
 }
