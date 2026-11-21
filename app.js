@@ -57,11 +57,16 @@
           plugin.mount(area, mission, correct => {
             if (!correct) { feedback.textContent = '괜찮아요! 다시 생각해 보세요.'; return; }
             state = Game.complete(state, station, renderLevel); save(); render();
-          });
+          }, {completed: state.completed[station.id]?.[renderLevel] === true, level: renderLevel});
         } catch (_) { if (area.isConnected) area.textContent = '게임을 불러오지 못했어요. 리더에게 도움을 요청해 주세요.'; }
       }
       collection(app);
-      const reset = el('button', '이 기기의 기록 삭제', app, {type:'button', class:'secondary'}); reset.onclick = () => { if (confirm('진행 기록을 삭제할까요?')) { state = Game.normalize({}); save(); render(); } };
+      if (!id) {
+        const leader = el('details', '', app, {class:'leader'});
+        el('summary', '리더', leader);
+        el('a', '리더용 QR 주소 목록', leader, {href:'urls.html'});
+        const reset = el('button', '이 기기의 기록 삭제', leader, {type:'button', class:'secondary'}); reset.onclick = () => { if (confirm('진행 기록을 삭제할까요?')) { state = Game.normalize({}); save(); render(); } };
+      }
     }
     render();
   } catch (_) { app.textContent = '데이터를 불러오지 못했습니다. 로컬 서버 실행 방법을 확인하고 다시 열어 주세요.'; }

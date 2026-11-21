@@ -3,8 +3,15 @@
   else (root.MiniGames ||= {}).cipher = factory();
 })(globalThis, function () {
   function correct(data, answer) { return typeof answer === 'string' && answer.trim().replace(/\s+/g, '') === data.answer.replace(/\s+/g, ''); }
-  function mount(container, data, finish) {
+  function mount(container, data, finish, options = {}) {
     const p = document.createElement('p'); p.textContent = data.clue; container.append(p);
+    if (options.level === 'child' && Array.isArray(data.choices) && data.choices.length) {
+      data.choices.forEach(choice => {
+        const button = document.createElement('button'); button.type = 'button'; button.textContent = choice;
+        button.onclick = () => finish(correct(data, choice)); container.append(button);
+      });
+      return;
+    }
     const form = document.createElement('form'), label = document.createElement('label'), input = document.createElement('input'), button = document.createElement('button');
     label.textContent = '암호의 답'; input.required = true; label.append(input); button.textContent = '정답 확인'; form.append(label, button); container.append(form);
     form.onsubmit = e => { e.preventDefault(); finish(correct(data, input.value)); };

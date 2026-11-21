@@ -3,10 +3,11 @@
   else (root.MiniGames ||= {}).memory = factory();
 })(globalThis, function () {
   function correct(data, pairs) { return Array.isArray(pairs) && pairs.length === data.pairs.length && new Set(pairs).size === data.pairs.length && data.pairs.every(x => pairs.includes(x)); }
-  function mount(container, data, finish) {
+  function initialMatched(data, completed) { return completed === true ? [...data.pairs] : []; }
+  function mount(container, data, finish, options = {}) {
     const cards = [...data.pairs, ...data.pairs].map((value, id) => ({value, id}));
     for (let i = cards.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [cards[i], cards[j]] = [cards[j], cards[i]]; }
-    let open = [], matched = [], locked = false;
+    let open = [], matched = initialMatched(data, options.completed), locked = false;
     const board = document.createElement('div'); container.append(board);
     function draw() {
       board.replaceChildren();
@@ -20,6 +21,9 @@
       }; board.append(b); });
     }
     draw();
+    const reset = document.createElement('button'); reset.type = 'button'; reset.textContent = '다시 하기';
+    reset.onclick = () => { container.replaceChildren(); mount(container, data, finish, {...options, completed: false}); };
+    container.append(reset);
   }
-  return {correct, mount};
+  return {correct, initialMatched, mount};
 });

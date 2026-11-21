@@ -55,3 +55,30 @@ test('모든 지점의 난이도 데이터와 조각 순서가 유효하다', ()
     if (s.game === 'memory') assert.equal(new Set(d.pairs).size, d.pairs.length);
   }
 });
+
+test('모든 아이용 암호 보기는 3~4개이며 정답과 오답을 판정한다', () => {
+  for (const station of stations.filter(s => s.game === 'cipher')) {
+    const data = station.child;
+    assert.ok(data.choices.length >= 3 && data.choices.length <= 4);
+    assert.equal(new Set(data.choices).size, data.choices.length);
+    assert.ok(data.choices.includes(data.answer));
+    for (const choice of data.choices) assert.equal(cipher.correct(data, choice), choice === data.answer);
+  }
+});
+test('모든 기억 게임은 아이 3쌍, 어른 4쌍 이상이다', () => {
+  for (const station of stations.filter(s => s.game === 'memory')) {
+    assert.equal(station.child.pairs.length, 3);
+    assert.ok(station.adult.pairs.length >= 4);
+    for (const level of ['child', 'adult']) assert.equal(new Set(station[level].pairs).size, station[level].pairs.length);
+  }
+});
+test('기억 게임 초기 표시는 저장된 해당 난이도의 완료 상태를 따른다', () => {
+  const station = stations.find(s => s.game === 'memory');
+  const state = Game.complete({}, station, 'child');
+  assert.deepEqual(memory.initialMatched(station.child, state.completed[station.id].child), station.child.pairs);
+  assert.deepEqual(memory.initialMatched(station.adult, state.completed[station.id].adult), []);
+  assert.deepEqual(memory.initialMatched(station.child, false), []);
+  const matched = memory.initialMatched(station.child, true);
+  matched.pop();
+  assert.equal(station.child.pairs.length, 3);
+});
