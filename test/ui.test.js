@@ -39,6 +39,7 @@ test('완료 기억 게임은 전체 앞면이며 다시 하기는 뒤집힌 새
   memory.mount(container, data, () => completions++, {completed: true});
   let board = container.children[0];
   assert.equal(board.children.length, 6);
+  assert.equal(board.className, 'memory-board');
   assert.ok(board.children.every(node => data.pairs.includes(node.textContent) && node.disabled));
   container.children[1].onclick();
   board = container.children[0];
@@ -48,3 +49,13 @@ test('완료 기억 게임은 전체 앞면이며 다시 하기는 뒤집힌 새
   assert.equal(board.children.filter(node => node.textContent !== '★').length, 1);
   assert.equal(completions, 0);
 }));
+
+test('두 페이지가 존재하는 favicon을 명시한다', () => {
+  const fs = require('node:fs');
+  const path = require('node:path');
+  const root = path.join(__dirname, '..');
+  for (const page of ['index.html', 'urls.html']) {
+    assert.match(fs.readFileSync(path.join(root, page), 'utf8'), /rel="icon" href="favicon\.svg"/);
+  }
+  assert.match(fs.readFileSync(path.join(root, 'favicon.svg'), 'utf8'), /<svg\b/);
+});

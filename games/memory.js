@@ -8,7 +8,7 @@
     const cards = [...data.pairs, ...data.pairs].map((value, id) => ({value, id}));
     for (let i = cards.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [cards[i], cards[j]] = [cards[j], cards[i]]; }
     let open = [], matched = initialMatched(data, options.completed), locked = false;
-    const board = document.createElement('div'); container.append(board);
+    const board = document.createElement('div'); board.className = 'memory-board'; container.append(board);
     function draw() {
       board.replaceChildren();
       cards.forEach(card => { const b = document.createElement('button'); b.type = 'button'; const visible = open.includes(card.id) || matched.includes(card.value); b.textContent = visible ? card.value : '★'; b.setAttribute('aria-label', visible ? card.value : '뒤집힌 카드'); b.disabled = locked || visible; b.onclick = () => {
